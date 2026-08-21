@@ -1,0 +1,23 @@
+// AGP and Kotlin plugin versions/classpaths are declared in settings.gradle
+// (via the modern pluginManagement { plugins { ... } } block). This file
+// intentionally does NOT also declare a buildscript{} classpath for the
+// same plugins — doing both at once causes Gradle plugin-version conflicts
+// ("plugin was already applied" / duplicate classpath errors).
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.buildDir = "../build"
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(":app")
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}

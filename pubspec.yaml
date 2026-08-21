@@ -1,0 +1,62 @@
+name: jarvis_ai
+description: "JARVIS AI - Your Voice. Your Phone. Your Assistant."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+
+  # State management
+  provider: ^6.1.2
+
+  # Local database
+  sqflite: ^2.3.3
+  path: ^1.9.0
+  shared_preferences: ^2.2.3
+
+  # Voice
+  speech_to_text: ^7.0.0
+  flutter_tts: ^4.0.2
+
+  # Device control
+  torch_light: ^1.1.0
+  battery_plus: ^6.0.2
+  permission_handler: ^11.3.1
+  android_intent_plus: ^5.1.0
+  url_launcher: ^6.3.0
+  device_info_plus: ^10.1.2
+  connectivity_plus: ^6.0.5
+  volume_controller: ^3.3.3
+  screen_brightness: ^2.1.2
+  package_info_plus: ^8.0.2
+
+  # Contacts (for name-based call/SMS resolution)
+  flutter_contacts: ^1.1.9+2
+
+  # Background service
+  flutter_foreground_task: ^8.13.1
+
+  # Networking (AI providers, weather, search)
+  http: ^1.2.2
+
+  # Utilities
+  intl: ^0.19.0
+  uuid: ^4.4.2
+  equatable: ^2.0.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  mockito: ^5.4.4
+  build_runner: ^2.4.11
+  integration_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

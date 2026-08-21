@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">JARVIS AI</string>
+    <string name="accessibility_service_description">
+        Allows JARVIS to lock/turn off the screen when you ask it to.
+        JARVIS does not read or record any screen content — this permission
+        is used only to perform the screen-lock action.
+    </string>
+</resources>

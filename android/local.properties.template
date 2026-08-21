@@ -1,0 +1,8 @@
+# RENAME this file to `local.properties` (remove .template) after cloning,
+# then fill in the paths for YOUR machine. This file is intentionally not
+# committed with real paths since they differ per-developer.
+
+sdk.dir=/path/to/your/Android/sdk
+flutter.sdk=/path/to/your/flutter
+flutter.versionName=1.0.0
+flutter.versionCode=1
