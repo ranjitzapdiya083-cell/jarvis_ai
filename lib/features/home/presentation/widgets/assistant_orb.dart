@@ -60,7 +60,10 @@ class _AssistantOrbState extends State<AssistantOrb> with TickerProviderStateMix
             child: Stack(
               alignment: Alignment.center,
               children: [
-                // Outer glow
+                // Outer glow — blur kept moderate (was 60-80) since very
+                // large blurRadius values are expensive to composite and
+                // can render as a blank/frozen frame on low-power GPUs or
+                // software-rendered environments (e.g. some emulators/CI).
                 Transform.scale(
                   scale: pulse,
                   child: Container(
@@ -71,13 +74,13 @@ class _AssistantOrbState extends State<AssistantOrb> with TickerProviderStateMix
                       boxShadow: [
                         BoxShadow(
                           color: AppColors.electricBlue.withValues(alpha: _isActive ? 0.45 : 0.25),
-                          blurRadius: 60,
-                          spreadRadius: 10,
+                          blurRadius: 24,
+                          spreadRadius: 6,
                         ),
                         BoxShadow(
                           color: AppColors.purple.withValues(alpha: _isActive ? 0.35 : 0.18),
-                          blurRadius: 80,
-                          spreadRadius: 4,
+                          blurRadius: 30,
+                          spreadRadius: 2,
                         ),
                       ],
                     ),
