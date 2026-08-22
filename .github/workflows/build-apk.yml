@@ -92,7 +92,12 @@ jobs:
   emulator-check:
     name: Run on Emulator & Capture Screenshot
     needs: build
-    runs-on: macos-latest # android-emulator-runner needs hardware acceleration, most reliable on GitHub's macOS runners
+    # Pinned to macos-13 (Intel-based) rather than macos-latest: GitHub's
+    # newer macOS runners are Apple Silicon (arm64), and the x86_64 Android
+    # emulator image below cannot use hardware acceleration there, which
+    # causes a boot timeout. macos-13 keeps the reliable Intel + x86_64
+    # combination that this emulator action is best tested with.
+    runs-on: macos-13
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -106,11 +111,12 @@ jobs:
       - name: Boot emulator, install app, capture screenshot + logs
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 34
+          api-level: 33
           target: google_apis
           arch: x86_64
           profile: pixel_6
           disable-animations: true
+          emulator-boot-timeout: 900
           script: |
             adb install -r ./apk/app-debug.apk
 
