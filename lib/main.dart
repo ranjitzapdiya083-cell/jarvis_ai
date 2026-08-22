@@ -20,6 +20,35 @@ import 'features/settings/presentation/settings_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // DIAGNOSTIC: make ANY widget-build failure impossible to miss. By
+  // default Flutter shows a small red error box only where the failure
+  // happened, which can end up invisible if it occurs inside a widget
+  // with unusual sizing. This override forces a full bright-red screen
+  // with the exact exception text whenever *any* widget fails to build,
+  // so a real Dart error can never look like a plain blank screen.
+  // (Safe to remove once the blank-screen issue is confirmed fixed.)
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    return Container(
+      color: const Color(0xFFFF0000),
+      alignment: Alignment.center,
+      padding: const EdgeInsets.all(16),
+      child: SingleChildScrollView(
+        child: Text(
+          'JARVIS DEBUG ERROR:\n\n${details.exceptionAsString()}',
+          style: const TextStyle(color: Colors.white, fontSize: 14),
+        ),
+      ),
+    );
+  };
+
+  // Also catch errors that happen outside the widget build phase (e.g. in
+  // async callbacks) and print them loudly instead of letting them vanish
+  // silently.
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+    debugPrint('JARVIS UNCAUGHT ERROR: ${details.exceptionAsString()}');
+  };
+
   // Ask for the two permissions the app cannot function at all without,
   // right at first launch — matching spec section 12 (progressive
   // permission requests, not a wall of prompts).
