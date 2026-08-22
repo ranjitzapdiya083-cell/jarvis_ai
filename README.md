@@ -81,6 +81,23 @@ git push origin v1.0.0
 This triggers the same workflow, and additionally publishes a GitHub
 Release with `app-release.apk` attached for anyone to download.
 
+**Bonus: automatic screenshot + crash logs on every build.** After the
+APK builds, a second job (`emulator-check`) automatically boots a virtual
+Android phone, installs the app, and captures:
+- `jarvis-ai-emulator-screenshot` — a real screenshot of the Home screen
+- `jarvis-ai-emulator-logcat` — the full system log from that run
+
+This means you (or I) can verify the app actually renders correctly, or
+see the exact crash reason, **without needing your own physical phone or
+running anything locally**. If the app crashes on launch, this job fails
+with a red ❌ instead of silently passing — so a broken build is obvious
+from the Actions tab alone. Open the failed/passed run → **Artifacts** →
+download the screenshot or logcat file.
+
+> Note: the emulator job runs on GitHub's macOS runners (needed for
+> hardware-accelerated emulation) and adds a few minutes to each workflow
+> run — this is normal.
+
 > Note: the workflow builds using the **debug signing config** (same as
 > local builds) so it works out of the box. For a Play Store submission,
 > add your own release keystore as GitHub Secrets and update

@@ -155,11 +155,17 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              ShaderMask(
-                shaderCallback: (bounds) => AppColors.orbGradient.createShader(bounds),
-                child: const Text(
-                  'JARVIS AI',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+              // NOTE: previously used ShaderMask for a gradient title —
+              // removed because ShaderMask can render as a blank/black
+              // frame on some Android GPU drivers (a known Flutter/Skia
+              // compatibility issue on certain budget/older devices).
+              // Solid brand color is safer and still looks good.
+              const Text(
+                'JARVIS AI',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.electricBlue,
                 ),
               ),
               Text('Your Voice. Your Phone. Your Assistant.',

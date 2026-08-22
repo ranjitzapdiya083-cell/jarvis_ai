@@ -31,6 +31,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.47.1'
           channel: 'stable'
           cache: true
 
@@ -83,3 +84,69 @@ jobs:
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Runs the freshly-built debug APK on a real virtual Android device
+  # (an emulator) and captures a screenshot + crash logs — so we can see
+  # whether the app actually renders correctly WITHOUT needing your own
+  # phone. Check this job's "Artifacts" after every run.
+  emulator-check:
+    name: Run on Emulator & Capture Screenshot
+    needs: build
+    runs-on: macos-latest # android-emulator-runner needs hardware acceleration, most reliable on GitHub's macOS runners
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download debug APK from the build job
+        uses: actions/download-artifact@v4
+        with:
+          name: jarvis-ai-debug-apk
+          path: ./apk
+
+      - name: Boot emulator, install app, capture screenshot + logs
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          script: |
+            adb install -r ./apk/app-debug.apk
+
+            # Pre-grant permissions so a system permission dialog doesn't
+            # sit on top of the home screen and hide it from the screenshot.
+            adb shell pm grant com.jarvis.ai android.permission.RECORD_AUDIO || true
+            adb shell pm grant com.jarvis.ai android.permission.POST_NOTIFICATIONS || true
+
+            # Clear old logs, then launch the app fresh.
+            adb logcat -c
+            adb shell monkey -p com.jarvis.ai -c android.intent.category.LAUNCHER 1
+
+            # Give the app time to fully start and render.
+            sleep 20
+
+            adb exec-out screencap -p > home_screen.png
+            adb logcat -d > logcat.txt
+
+            # Fails this job loudly if the app isn't actually in the
+            # foreground after 20s (e.g. it crashed on launch) — so a
+            # crash shows up as a red ❌ instead of silently producing an
+            # empty/black screenshot that looks like it "worked".
+            adb shell dumpsys activity activities | grep -q "com.jarvis.ai" && echo "App is running." || (echo "App is NOT in the foreground — it likely crashed on launch. Check logcat.txt." && exit 1)
+
+      - name: Upload screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jarvis-ai-emulator-screenshot
+          path: home_screen.png
+          retention-days: 30
+
+      - name: Upload crash/debug logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jarvis-ai-emulator-logcat
+          path: logcat.txt
+          retention-days: 30
